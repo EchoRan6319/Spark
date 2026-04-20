@@ -20,6 +20,7 @@ class ProjectPage extends ConsumerWidget {
     return GradientBackground(
       colors: const [Color(0xFF0D1A2E), Color(0xFF0D0820), Color(0xFF071A1A)],
       child: SafeArea(
+        bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -23,6 +23,7 @@ class MainShell extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFF0D0820),
+      extendBody: true,
       body: child,
       floatingActionButton: _buildFab(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

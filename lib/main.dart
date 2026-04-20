@@ -49,9 +49,9 @@ class SparkApp extends StatelessWidget {
         child: MaterialApp.router(
           title: config.appName,
           debugShowCheckedModeBanner: config.showDebugBanner,
-          theme: AppTheme.darkTheme,
+          theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
-          themeMode: ThemeMode.dark,
+          themeMode: ThemeMode.system,
           routerConfig: appRouter,
         ),
       ),

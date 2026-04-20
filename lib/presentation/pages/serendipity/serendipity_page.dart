@@ -20,6 +20,7 @@ class SerendipityPage extends ConsumerWidget {
     return AnimatedGradientBackground(
       colors: AppColors.serendipityGradient,
       child: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             // 顶部标题

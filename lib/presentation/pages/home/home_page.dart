@@ -22,6 +22,7 @@ class HomePage extends ConsumerWidget {
     return AnimatedGradientBackground(
       colors: AppColors.homeGradient,
       child: SafeArea(
+        bottom: false,
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [

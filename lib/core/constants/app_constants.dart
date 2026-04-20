@@ -2,29 +2,50 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // 主色调
-  static const Color primary = Color(0xFF6366F1); // 紫色
-  static const Color primaryDark = Color(0xFF4F46E5);
-  static const Color primaryLight = Color(0xFF818CF8);
+  // --- 核心品牌色 (iOS 26 Liquid 风格) ---
+  static const Color primary = Color(0xFF007AFF); // Apple Blue
+  static const Color primaryLight = Color(0xFF47A1FF);
+  static const Color primaryDark = Color(0xFF0056B3);
 
-  // 辅助色
-  static const Color accent = Color(0xFFF59E0B); // 橙色/琥珀色
-  static const Color accentDark = Color(0xFFD97706);
-  static const Color accentLight = Color(0xFFFBBF24);
+  // --- 功能色 ---
+  static const Color accent = Color(0xFFFF9500); // Apple Orange
+  static const Color success = Color(0xFF34C759); // Apple Green
+  static const Color error = Color(0xFFFF3B30); // Apple Red
+  static const Color warning = Color(0xFFFFCC00); // Apple Yellow
+  
+  static const Color pink = Color(0xFFFF2D55);
+  static const Color blue = Color(0xFF5AC8FA);
+  static const Color teal = Color(0xFF5856D6); // Indigo-ish for some elements
+  static const Color mint = Color(0xFF00C7BE);
 
-  static const Color pink = Color(0xFFEC4899);
-  static const Color blue = Color(0xFF0EA5E9);
-  static const Color teal = Color(0xFF14B8A6);
-  static const Color green = Color(0xFF10B981);
+  // --- 语义化背景色 (Dark Mode 默认) ---
+  static const Color bgDark = Color(0xFF000000);
+  static const Color bgDarkSecondary = Color(0xFF1C1C1E);
+  static const Color bgDarkTertiary = Color(0xFF2C2C2E);
 
-  // 情绪色彩
+  // --- 语义化背景色 (Light Mode) ---
+  static const Color bgLight = Color(0xFFFFFFFF);
+  static const Color bgLightSecondary = Color(0xFFF2F2F7);
+  static const Color bgLightTertiary = Color(0xFFE5E5EA);
+
+  // --- 文字颜色 (Dark Mode) ---
+  static const Color textPrimary = Color(0xFFFFFFFF);
+  static const Color textSecondary = Color(0xFFEBEBF5); // 60% opacity look
+  static const Color textMuted = Color(0xFF8E8E93);
+
+  // --- 文字颜色 (Light Mode) ---
+  static const Color textPrimaryLight = Color(0xFF000000);
+  static const Color textSecondaryLight = Color(0xFF3C3C43);
+  static const Color textMutedLight = Color(0xFF8E8E93);
+
+  // 情绪色彩 (适配 iOS 26 精致感)
   static const Map<String, Color> emotionColors = {
-    'excited': Color(0xFFF59E0B),   // 兴奋 - 橙色
-    'calm': Color(0xFF0EA5E9),      // 平静 - 蓝色
-    'curious': Color(0xFF6366F1),   // 好奇 - 紫色
-    'anxious': Color(0xFFEF4444),   // 焦虑 - 红色
-    'inspired': Color(0xFFEC4899),  // 灵感 - 粉色
-    'neutral': Color(0xFF6B7280),   // 中性 - 灰色
+    'excited': Color(0xFFFF9500),   // 兴奋
+    'calm': Color(0xFF007AFF),      // 平静
+    'curious': Color(0xFF5856D6),   // 好奇
+    'anxious': Color(0xFFFF3B30),   // 焦虑
+    'inspired': Color(0xFFFF2D55),  // 灵感
+    'neutral': Color(0xFF8E8E93),   // 中性
   };
 
   static const Map<String, String> emotionEmojis = {
@@ -45,46 +66,41 @@ class AppColors {
     'neutral': '中性',
   };
 
-  // 渐变背景
+  // 渐变背景 (iOS 26 深邃感)
   static const List<Color> homeGradient = [
-    Color(0xFF1A1040),
-    Color(0xFF2D1B69),
-    Color(0xFF11204D),
+    Color(0xFF000000),
+    Color(0xFF0A0A1F),
+    Color(0xFF000000),
   ];
 
   static const List<Color> captureGradient = [
-    Color(0xFF1C1505),
-    Color(0xFF2D1F00),
-    Color(0xFF3D2A00),
+    Color(0xFF000000),
+    Color(0xFF1F1A00),
+    Color(0xFF000000),
   ];
 
   static const List<Color> collectionGradient = [
-    Color(0xFF0D0D2B),
-    Color(0xFF1A1040),
-    Color(0xFF0D1A35),
+    Color(0xFF000000),
+    Color(0xFF0A1F1F),
+    Color(0xFF000000),
   ];
 
   static const List<Color> serendipityGradient = [
-    Color(0xFF1A0D2E),
-    Color(0xFF2D1040),
-    Color(0xFF1A0D35),
+    Color(0xFF000000),
+    Color(0xFF1F0A1F),
+    Color(0xFF000000),
   ];
 
-  // 文字颜色
-  static const Color textPrimary = Color(0xFFF8FAFC);
-  static const Color textSecondary = Color(0xFFCBD5E1);
-  static const Color textMuted = Color(0xFF94A3B8);
-
-  // 卡片颜色列表（灵感卡片随机颜色）
+  // 卡片颜色列表 (iOS 系统色)
   static const List<Color> cardColors = [
-    Color(0xFF6366F1),
-    Color(0xFFF59E0B),
-    Color(0xFFEC4899),
-    Color(0xFF0EA5E9),
-    Color(0xFF10B981),
-    Color(0xFF14B8A6),
-    Color(0xFF8B5CF6),
-    Color(0xFFEF4444),
+    Color(0xFF007AFF),
+    Color(0xFFFF9500),
+    Color(0xFFFF2D55),
+    Color(0xFF5AC8FA),
+    Color(0xFF34C759),
+    Color(0xFF5856D6),
+    Color(0xFFAF52DE),
+    Color(0xFFFF3B30),
   ];
 }
 

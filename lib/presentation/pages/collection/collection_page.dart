@@ -33,6 +33,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
     return GradientBackground(
       colors: AppColors.collectionGradient,
       child: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             // 标题 + 搜索
