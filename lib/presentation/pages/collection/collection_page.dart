@@ -45,7 +45,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                   const SizedBox(height: 12),
                   GlassSearchBar(
                     controller: _searchController,
-                    hintText: AppStrings.searchHint,
+                    placeholder: AppStrings.searchHint,
                     onChanged: (v) => ref.read(searchQueryProvider.notifier).state = v,
                     onSubmitted: (v) => ref.read(searchQueryProvider.notifier).state = v,
                   ),

@@ -18,7 +18,7 @@ class AppTheme {
         onSurface: AppColors.textPrimary,
       ),
       scaffoldBackgroundColor: const Color(0xFF0D0820),
-      fontFamily: 'NotoSansSC',
+      fontFamily: null,
       textTheme: const TextTheme(
         displayLarge: TextStyle(
           fontSize: 32,
@@ -130,7 +130,7 @@ class AppTheme {
           fontSize: 20,
           fontWeight: FontWeight.w700,
           color: AppColors.textPrimary,
-          fontFamily: 'NotoSansSC',
+          fontFamily: null,
         ),
         iconTheme: IconThemeData(color: AppColors.textPrimary),
       ),

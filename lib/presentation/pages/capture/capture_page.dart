@@ -116,8 +116,10 @@ class _CapturePageState extends ConsumerState<CapturePage> {
                     icon: const Icon(Icons.close_rounded, color: AppColors.textSecondary),
                   ),
                   Text('记录灵感', style: Theme.of(context).textTheme.headlineSmall),
-                  GlassButton(
-                    onPressed: _save,
+                  GlassButton.custom(
+                    onTap: _save,
+                    width: 80,
+                    height: 40,
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
                       const Icon(Icons.check_rounded, color: Colors.white, size: 18),
                       const SizedBox(width: 6),

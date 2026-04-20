@@ -72,32 +72,29 @@ class _ProjectDetailPageState extends ConsumerState<ProjectDetailPage> {
                         ),
                         GlassPullDownButton(
                           items: [
-                            GlassPullDownItem(
+                            GlassMenuItem(
                               title: '标记为进行中',
                               icon: const Icon(Icons.play_arrow_rounded, size: 16),
                               onTap: () => ref.read(projectsProvider.notifier).updateStatus(project.uid, 'in_progress'),
                             ),
-                            GlassPullDownItem(
+                            GlassMenuItem(
                               title: '标记为已完成',
                               icon: const Icon(Icons.check_circle_outline_rounded, size: 16),
                               onTap: () => ref.read(projectsProvider.notifier).updateStatus(project.uid, 'completed'),
                             ),
-                            GlassPullDownItem(
+                            GlassMenuItem(
                               title: '归档项目',
                               icon: const Icon(Icons.archive_outlined, size: 16),
                               onTap: () => ref.read(projectsProvider.notifier).updateStatus(project.uid, 'archived'),
                             ),
-                            GlassPullDownItem(
+                            GlassMenuItem(
                               title: '删除项目',
                               icon: const Icon(Icons.delete_outline_rounded, size: 16, color: Colors.redAccent),
                               onTap: () => _deleteProject(context, project),
                               isDestructive: true,
                             ),
                           ],
-                          child: GlassIconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.more_horiz_rounded, color: AppColors.textSecondary),
-                          ),
+                          icon: const Icon(Icons.more_horiz_rounded, color: AppColors.textSecondary),
                         ),
                       ],
                     ),

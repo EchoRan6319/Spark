@@ -74,8 +74,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     const SizedBox(width: 12),
                     Expanded(child: Text('设置', style: Theme.of(context).textTheme.headlineSmall)),
                     if (_hasChanges)
-                      GlassButton(
-                        onPressed: _saveSettings,
+                      GlassButton.custom(
+                        onTap: _saveSettings,
+                        width: 80,
+                        height: 40,
                         child: const Row(mainAxisSize: MainAxisSize.min, children: [
                           Icon(Icons.check_rounded, color: Colors.white, size: 16),
                           SizedBox(width: 6),
@@ -220,8 +222,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
                     // 保存按钮
                     if (_hasChanges)
-                      GlassButton(
-                        onPressed: _saveSettings,
+                      GlassButton.custom(
+                        onTap: _saveSettings,
+                        width: 180,
+                        height: 48,
                         child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                           Icon(Icons.save_rounded, color: Colors.white),
                           SizedBox(width: 8),

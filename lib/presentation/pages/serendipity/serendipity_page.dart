@@ -63,8 +63,10 @@ class SerendipityPage extends ConsumerWidget {
                           const SizedBox(height: 8),
                           Text('快去记录你的第一个灵感！', style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.center),
                           const SizedBox(height: 20),
-                          GlassButton(
-                            onPressed: () => context.push('/capture'),
+                          GlassButton.custom(
+                            onTap: () => context.push('/capture'),
+                            width: 140,
+                            height: 44,
                             child: const Row(mainAxisSize: MainAxisSize.min, children: [
                               Icon(Icons.add_rounded, color: Colors.white),
                               SizedBox(width: 8),
@@ -114,8 +116,10 @@ class SerendipityPage extends ConsumerWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            GlassButton(
-                              onPressed: () => context.push('/detail/${inspiration.uid}'),
+                            GlassButton.custom(
+                              onTap: () => context.push('/detail/${inspiration.uid}'),
+                              width: 120,
+                              height: 44,
                               child: const Row(mainAxisSize: MainAxisSize.min, children: [
                                 Icon(Icons.open_in_new_rounded, color: Colors.white, size: 16),
                                 SizedBox(width: 6),
@@ -123,8 +127,10 @@ class SerendipityPage extends ConsumerWidget {
                               ]),
                             ),
                             const SizedBox(width: 12),
-                            GlassButton(
-                              onPressed: () => ref.read(randomInspirationProvider.notifier).loadRandom(),
+                            GlassButton.custom(
+                              onTap: () => ref.read(randomInspirationProvider.notifier).loadRandom(),
+                              width: 100,
+                              height: 44,
                               child: const Row(mainAxisSize: MainAxisSize.min, children: [
                                 Icon(Icons.shuffle_rounded, color: Colors.white, size: 16),
                                 SizedBox(width: 6),

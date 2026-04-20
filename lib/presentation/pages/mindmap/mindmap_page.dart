@@ -52,8 +52,10 @@ class MindmapPage extends ConsumerWidget {
                           child: Text('思维导图', style: Theme.of(context).textTheme.headlineSmall),
                         ),
                         if (mindMapState.root == null && !mindMapState.isLoading)
-                          GlassButton(
-                            onPressed: () => ref.read(mindMapProvider(inspirationUid).notifier).generate(inspiration!.content),
+                          GlassButton.custom(
+                            onTap: () => ref.read(mindMapProvider(inspirationUid).notifier).generate(inspiration!.content),
+                            width: 120,
+                            height: 40,
                             child: const Row(mainAxisSize: MainAxisSize.min, children: [
                               Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 16),
                               SizedBox(width: 6),
@@ -83,8 +85,10 @@ class MindmapPage extends ConsumerWidget {
                                     child: Text(mindMapState.error!, style: const TextStyle(color: Colors.redAccent), textAlign: TextAlign.center),
                                   ),
                                   const SizedBox(height: 12),
-                                  GlassButton(
-                                    onPressed: () => ref.read(mindMapProvider(inspirationUid).notifier).generate(inspiration!.content),
+                                  GlassButton.custom(
+                                    onTap: () => ref.read(mindMapProvider(inspirationUid).notifier).generate(inspiration!.content),
+                                    width: 80,
+                                    height: 40,
                                     child: const Text('重试', style: TextStyle(color: Colors.white)),
                                   ),
                                 ]),
@@ -120,8 +124,10 @@ class MindmapPage extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 24),
-          GlassButton(
-            onPressed: () => ref.read(mindMapProvider(inspirationUid).notifier).generate(inspiration.content),
+          GlassButton.custom(
+            onTap: () => ref.read(mindMapProvider(inspirationUid).notifier).generate(inspiration.content),
+            width: 180,
+            height: 44,
             child: const Row(mainAxisSize: MainAxisSize.min, children: [
               Icon(Icons.auto_awesome_rounded, color: Colors.white),
               SizedBox(width: 8),

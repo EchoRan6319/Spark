@@ -208,8 +208,10 @@ class _DetailPageState extends ConsumerState<DetailPage> {
                     Text('AI 分析', style: Theme.of(context).textTheme.titleMedium),
                   ]),
                   if (!_isAnalyzing)
-                    GlassButton(
-                      onPressed: () => _runAnalysis(inspiration),
+                    GlassButton.custom(
+                      onTap: () => _runAnalysis(inspiration),
+                      width: 100,
+                      height: 36,
                       child: Row(mainAxisSize: MainAxisSize.min, children: [
                         const Icon(Icons.refresh_rounded, color: Colors.white, size: 16),
                         const SizedBox(width: 4),
@@ -374,8 +376,10 @@ class _DetailPageState extends ConsumerState<DetailPage> {
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: Row(children: [
         Expanded(
-          child: GlassButton(
-            onPressed: () => context.push('/mindmap/${inspiration.uid}'),
+          child: GlassButton.custom(
+            onTap: () => context.push('/mindmap/${inspiration.uid}'),
+            width: double.infinity,
+            height: 44,
             child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Icon(Icons.account_tree_rounded, color: Colors.white, size: 18),
               SizedBox(width: 6),
@@ -385,8 +389,10 @@ class _DetailPageState extends ConsumerState<DetailPage> {
         ),
         const SizedBox(width: 10),
         Expanded(
-          child: GlassButton(
-            onPressed: () => context.push('/ai-chat/${inspiration.uid}'),
+          child: GlassButton.custom(
+            onTap: () => context.push('/ai-chat/${inspiration.uid}'),
+            width: double.infinity,
+            height: 44,
             child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Icon(Icons.chat_bubble_outline_rounded, color: Colors.white, size: 18),
               SizedBox(width: 6),
@@ -395,8 +401,10 @@ class _DetailPageState extends ConsumerState<DetailPage> {
           ),
         ),
         const SizedBox(width: 10),
-        GlassButton(
-          onPressed: () => _convertToProject(context, inspiration, color),
+        GlassButton.custom(
+          onTap: () => _convertToProject(context, inspiration, color),
+          width: 100,
+          height: 44,
           child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Icon(Icons.add_task_rounded, color: Colors.white, size: 18),
             SizedBox(width: 6),
