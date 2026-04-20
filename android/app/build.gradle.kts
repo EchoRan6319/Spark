@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.echorandev.spark"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -20,8 +20,8 @@ android {
 
     defaultConfig {
         applicationId = "com.echorandev.spark"
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdk = 24
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

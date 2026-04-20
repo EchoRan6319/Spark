@@ -13,6 +13,7 @@ dependencies:
   # UI - 液态玻璃组件库
   liquid_glass_widgets: ^0.7.17
   font_awesome_flutter: ^10.8.0
+  cupertino_icons: ^1.0.8
 
   # 状态管理
   flutter_riverpod: ^2.6.1
@@ -24,7 +25,8 @@ dependencies:
 
   # 本地存储
   isar: ^3.1.0+1
-  isar_flutter_libs: ^3.1.0+1
+  isar_flutter_libs:
+    path: plugins/isar_flutter_libs
   path_provider: ^2.1.5
 
   # 网络
