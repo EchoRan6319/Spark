@@ -48,6 +48,10 @@ class _DetailPageState extends ConsumerState<DetailPage> {
       loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, _) => Scaffold(body: Center(child: Text('错误: $e'))),
       data: (list) {
+        final textPrimary = AppColors.adaptiveTextPrimary(context);
+        final textSecondary = AppColors.adaptiveTextSecondary(context);
+        final textMuted = AppColors.adaptiveTextMuted(context);
+        final isDark = AppColors.isDark(context);
         final inspiration = _getInspiration(list);
         if (inspiration == null) {
           return Scaffold(
@@ -63,10 +67,6 @@ class _DetailPageState extends ConsumerState<DetailPage> {
         // 如果已有 AI 分析，解析它
         if (_analysisResult == null && inspiration.aiAnalysis != null) {
           try {
-            final raw = inspiration.aiAnalysis!
-                .replaceAll("'", '"')
-                .replaceAll('(', '')
-                .replaceAll(')', '');
             _analysisResult = AiAnalysisResult.fromJson(jsonDecode(inspiration.aiAnalysis!) as Map<String, dynamic>);
           } catch (_) {}
         }
@@ -75,9 +75,8 @@ class _DetailPageState extends ConsumerState<DetailPage> {
 
         return AnimatedGradientBackground(
           colors: [
-            color.withOpacity(0.3),
-            const Color(0xFF0D0820),
-            const Color(0xFF0D0820),
+            color.withOpacity(isDark ? 0.3 : 0.14),
+            ...AppColors.captureGradientFor(context).skip(1),
           ],
           child: Scaffold(
             backgroundColor: Colors.transparent,
@@ -85,10 +84,10 @@ class _DetailPageState extends ConsumerState<DetailPage> {
               child: CustomScrollView(
                 physics: const BouncingScrollPhysics(),
                 slivers: [
-                  SliverToBoxAdapter(child: _buildAppBar(context, inspiration, color)),
-                  SliverToBoxAdapter(child: _buildContent(context, inspiration, color)),
-                  SliverToBoxAdapter(child: _buildAiAnalysis(context, inspiration, color)),
-                  SliverToBoxAdapter(child: _buildSupplements(context, inspiration, color)),
+                  SliverToBoxAdapter(child: _buildAppBar(context, inspiration, color, textSecondary, textMuted)),
+                  SliverToBoxAdapter(child: _buildContent(context, inspiration, color, textPrimary)),
+                  SliverToBoxAdapter(child: _buildAiAnalysis(context, inspiration, color, textMuted, isDark)),
+                  SliverToBoxAdapter(child: _buildSupplements(context, inspiration, color, textPrimary, textMuted, isDark)),
                   SliverToBoxAdapter(child: _buildActions(context, inspiration, color)),
                   const SliverToBoxAdapter(child: SizedBox(height: 80)),
                 ],
@@ -100,7 +99,13 @@ class _DetailPageState extends ConsumerState<DetailPage> {
     );
   }
 
-  Widget _buildAppBar(BuildContext context, Inspiration inspiration, Color color) {
+  Widget _buildAppBar(
+    BuildContext context,
+    Inspiration inspiration,
+    Color color,
+    Color textSecondary,
+    Color textMuted,
+  ) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
       child: Row(
@@ -108,20 +113,20 @@ class _DetailPageState extends ConsumerState<DetailPage> {
         children: [
           GlassIconButton(
             onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back_ios_rounded, color: AppColors.textSecondary),
+            icon: Icon(Icons.arrow_back_ios_rounded, color: textSecondary),
           ),
           Row(children: [
             GlassIconButton(
               onPressed: () => ref.read(inspirationsProvider.notifier).toggleFavorite(inspiration.uid),
               icon: Icon(
                 inspiration.isFavorite ? Icons.star_rounded : Icons.star_outline_rounded,
-                color: inspiration.isFavorite ? const Color(0xFFF59E0B) : AppColors.textSecondary,
+                color: inspiration.isFavorite ? const Color(0xFFF59E0B) : textSecondary,
               ),
             ),
             const SizedBox(width: 8),
             GlassIconButton(
               onPressed: () => _showDeleteDialog(context, inspiration),
-              icon: const Icon(Icons.delete_outline_rounded, color: AppColors.textMuted),
+              icon: Icon(Icons.delete_outline_rounded, color: textMuted),
             ),
           ]),
         ],
@@ -129,7 +134,7 @@ class _DetailPageState extends ConsumerState<DetailPage> {
     );
   }
 
-  Widget _buildContent(BuildContext context, Inspiration inspiration, Color color) {
+  Widget _buildContent(BuildContext context, Inspiration inspiration, Color color, Color textPrimary) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Column(
@@ -164,7 +169,11 @@ class _DetailPageState extends ConsumerState<DetailPage> {
               padding: const EdgeInsets.all(20),
               child: SelectableText(
                 inspiration.content,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 17, height: 1.8),
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontSize: 17,
+                  height: 1.8,
+                  color: textPrimary,
+                ),
               ),
             ),
           ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1),
@@ -190,7 +199,13 @@ class _DetailPageState extends ConsumerState<DetailPage> {
     );
   }
 
-  Widget _buildAiAnalysis(BuildContext context, Inspiration inspiration, Color color) {
+  Widget _buildAiAnalysis(
+    BuildContext context,
+    Inspiration inspiration,
+    Color color,
+    Color textMuted,
+    bool isDark,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GlassCard(
@@ -226,7 +241,7 @@ class _DetailPageState extends ConsumerState<DetailPage> {
                 const SizedBox(height: 16),
                 const Center(child: CircularProgressIndicator()),
                 const SizedBox(height: 8),
-                const Center(child: Text('AI 正在分析中...', style: TextStyle(color: AppColors.textMuted))),
+                Center(child: Text('AI 正在分析中...', style: TextStyle(color: textMuted))),
               ],
 
               if (_aiError != null) ...[
@@ -279,7 +294,7 @@ class _DetailPageState extends ConsumerState<DetailPage> {
 
               if (_analysisResult == null && !_isAnalyzing && _aiError == null) ...[
                 const SizedBox(height: 12),
-                const Center(child: Text('点击「分析」按钮，让 AI 评估这个想法', style: TextStyle(color: AppColors.textMuted, fontSize: 13))),
+                Center(child: Text('点击「分析」按钮，让 AI 评估这个想法', style: TextStyle(color: textMuted, fontSize: 13))),
               ],
             ],
           ),
@@ -308,7 +323,14 @@ class _DetailPageState extends ConsumerState<DetailPage> {
     ]);
   }
 
-  Widget _buildSupplements(BuildContext context, Inspiration inspiration, Color color) {
+  Widget _buildSupplements(
+    BuildContext context,
+    Inspiration inspiration,
+    Color color,
+    Color textPrimary,
+    Color textMuted,
+    bool isDark,
+  ) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: GlassCard(
@@ -330,7 +352,7 @@ class _DetailPageState extends ConsumerState<DetailPage> {
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.04),
+                      color: isDark ? Colors.white.withOpacity(0.04) : Colors.black.withOpacity(0.03),
                       borderRadius: BorderRadius.circular(AppSizes.radiusM),
                       border: Border(left: BorderSide(color: color, width: 3)),
                     ),
@@ -344,12 +366,12 @@ class _DetailPageState extends ConsumerState<DetailPage> {
                 Expanded(
                   child: TextField(
                     controller: _supplementController,
-                    style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
-                    decoration: const InputDecoration(
+                    style: TextStyle(color: textPrimary, fontSize: 14),
+                    decoration: InputDecoration(
                       hintText: '添加补充记录...',
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.zero,
-                      hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 14),
+                      hintStyle: TextStyle(color: textMuted, fontSize: 14),
                     ),
                   ),
                 ),
@@ -453,9 +475,12 @@ class _DetailPageState extends ConsumerState<DetailPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1040),
-        title: const Text('删除灵感', style: TextStyle(color: AppColors.textPrimary)),
-        content: const Text('确定要删除这条灵感吗？此操作不可撤销。', style: TextStyle(color: AppColors.textSecondary)),
+        backgroundColor: Theme.of(ctx).colorScheme.surface,
+        title: Text('删除灵感', style: TextStyle(color: AppColors.adaptiveTextPrimary(ctx))),
+        content: Text(
+          '确定要删除这条灵感吗？此操作不可撤销。',
+          style: TextStyle(color: AppColors.adaptiveTextSecondary(ctx)),
+        ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('取消')),
           TextButton(

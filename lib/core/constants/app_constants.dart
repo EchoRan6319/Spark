@@ -12,7 +12,7 @@ class AppColors {
   static const Color success = Color(0xFF34C759); // Apple Green
   static const Color error = Color(0xFFFF3B30); // Apple Red
   static const Color warning = Color(0xFFFFCC00); // Apple Yellow
-  
+
   static const Color pink = Color(0xFFFF2D55);
   static const Color blue = Color(0xFF5AC8FA);
   static const Color teal = Color(0xFF5856D6); // Indigo-ish for some elements
@@ -40,12 +40,12 @@ class AppColors {
 
   // 情绪色彩 (适配 iOS 26 精致感)
   static const Map<String, Color> emotionColors = {
-    'excited': Color(0xFFFF9500),   // 兴奋
-    'calm': Color(0xFF007AFF),      // 平静
-    'curious': Color(0xFF5856D6),   // 好奇
-    'anxious': Color(0xFFFF3B30),   // 焦虑
-    'inspired': Color(0xFFFF2D55),  // 灵感
-    'neutral': Color(0xFF8E8E93),   // 中性
+    'excited': Color(0xFFFF9500), // 兴奋
+    'calm': Color(0xFF007AFF), // 平静
+    'curious': Color(0xFF5856D6), // 好奇
+    'anxious': Color(0xFFFF3B30), // 焦虑
+    'inspired': Color(0xFFFF2D55), // 灵感
+    'neutral': Color(0xFF8E8E93), // 中性
   };
 
   static const Map<String, String> emotionEmojis = {
@@ -90,6 +90,100 @@ class AppColors {
     Color(0xFF1F0A1F),
     Color(0xFF000000),
   ];
+
+  static const List<Color> projectGradient = [
+    Color(0xFF0D1A2E),
+    Color(0xFF0D0820),
+    Color(0xFF071A1A),
+  ];
+
+  static const List<Color> mindmapGradient = [
+    Color(0xFF0D0820),
+    Color(0xFF1A0D2E),
+    Color(0xFF0D1A2E),
+  ];
+
+  static const List<Color> aiChatGradient = [
+    Color(0xFF0D0820),
+    Color(0xFF0D1A35),
+    Color(0xFF0D0820),
+  ];
+
+  // 渐变背景 (Light Mode)
+  static const List<Color> homeGradientLight = [
+    Color(0xFFF8FAFF),
+    Color(0xFFEFF4FF),
+    Color(0xFFF8FAFF),
+  ];
+
+  static const List<Color> captureGradientLight = [
+    Color(0xFFFFFCF5),
+    Color(0xFFFFF6E8),
+    Color(0xFFFFFCF5),
+  ];
+
+  static const List<Color> collectionGradientLight = [
+    Color(0xFFF6FCFC),
+    Color(0xFFEAF8F8),
+    Color(0xFFF6FCFC),
+  ];
+
+  static const List<Color> serendipityGradientLight = [
+    Color(0xFFFCF8FF),
+    Color(0xFFF5EEFF),
+    Color(0xFFFCF8FF),
+  ];
+
+  static const List<Color> projectGradientLight = [
+    Color(0xFFF4F8FF),
+    Color(0xFFF8F6FF),
+    Color(0xFFF2FBFB),
+  ];
+
+  static const List<Color> mindmapGradientLight = [
+    Color(0xFFF7F5FF),
+    Color(0xFFF7F9FF),
+    Color(0xFFF3FAFF),
+  ];
+
+  static const List<Color> aiChatGradientLight = [
+    Color(0xFFF7F7FF),
+    Color(0xFFF2F8FF),
+    Color(0xFFF7F7FF),
+  ];
+
+  static bool isDark(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark;
+
+  static Color adaptiveTextPrimary(BuildContext context) =>
+      isDark(context) ? textPrimary : textPrimaryLight;
+
+  static Color adaptiveTextSecondary(BuildContext context) =>
+      isDark(context) ? textSecondary : textSecondaryLight;
+
+  static Color adaptiveTextMuted(BuildContext context) =>
+      isDark(context) ? textMuted : textMutedLight;
+
+  static List<Color> homeGradientFor(BuildContext context) =>
+      isDark(context) ? homeGradient : homeGradientLight;
+
+  static List<Color> captureGradientFor(BuildContext context) =>
+      isDark(context) ? captureGradient : captureGradientLight;
+
+  static List<Color> collectionGradientFor(BuildContext context) =>
+      isDark(context) ? collectionGradient : collectionGradientLight;
+
+  static List<Color> serendipityGradientFor(BuildContext context) =>
+      isDark(context) ? serendipityGradient : serendipityGradientLight;
+
+  static List<Color> projectGradientFor(BuildContext context) =>
+      isDark(context) ? projectGradient : projectGradientLight;
+
+  static List<Color> mindmapGradientFor(BuildContext context) =>
+      isDark(context) ? mindmapGradient : mindmapGradientLight;
+
+  static List<Color> aiChatGradientFor(BuildContext context) =>
+      isDark(context) ? aiChatGradient : aiChatGradientLight;
 
   // 卡片颜色列表 (iOS 系统色)
   static const List<Color> cardColors = [

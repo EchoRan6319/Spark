@@ -27,8 +27,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     super.initState();
     final settings = ref.read(settingsProvider).value;
     _apiKeyController = TextEditingController(text: settings?.aiApiKey ?? '');
-    _baseUrlController = TextEditingController(text: settings?.aiApiBaseUrl ?? 'https://api.openai.com/v1');
-    _modelController = TextEditingController(text: settings?.aiModel ?? 'gpt-4o-mini');
+    _baseUrlController = TextEditingController(
+        text: settings?.aiApiBaseUrl ?? 'https://api.openai.com/v1');
+    _modelController =
+        TextEditingController(text: settings?.aiModel ?? 'gpt-4o-mini');
   }
 
   @override
@@ -41,22 +43,27 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   Future<void> _saveSettings() async {
     await ref.read(settingsProvider.notifier).updateApiConfig(
-      apiKey: _apiKeyController.text.trim(),
-      apiBaseUrl: _baseUrlController.text.trim(),
-      model: _modelController.text.trim(),
-    );
+          apiKey: _apiKeyController.text.trim(),
+          apiBaseUrl: _baseUrlController.text.trim(),
+          model: _modelController.text.trim(),
+        );
     if (mounted) {
       setState(() => _hasChanges = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('设置已保存 ✓'), backgroundColor: AppColors.primary),
+        const SnackBar(
+            content: Text('设置已保存 ✓'), backgroundColor: AppColors.primary),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final textPrimary = AppColors.adaptiveTextPrimary(context);
+    final textSecondary = AppColors.adaptiveTextSecondary(context);
+    final textMuted = AppColors.adaptiveTextMuted(context);
+
     return GradientBackground(
-      colors: const [Color(0xFF0D0820), Color(0xFF1A0D2E), Color(0xFF0D1A35)],
+      colors: AppColors.serendipityGradientFor(context),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
@@ -69,20 +76,34 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   children: [
                     GlassIconButton(
                       onPressed: () => context.pop(),
-                      icon: const Icon(Icons.arrow_back_ios_rounded, color: AppColors.textSecondary),
+                      icon: Icon(Icons.arrow_back_ios_rounded,
+                          color: textSecondary),
                     ),
                     const SizedBox(width: 12),
-                    Expanded(child: Text('设置', style: Theme.of(context).textTheme.headlineSmall)),
+                    Expanded(
+                        child: Text('设置',
+                            style: Theme.of(context).textTheme.headlineSmall)),
                     if (_hasChanges)
                       GlassButton.custom(
                         onTap: _saveSettings,
-                        width: 80,
-                        height: 40,
-                        child: const Row(mainAxisSize: MainAxisSize.min, children: [
-                          Icon(Icons.check_rounded, color: Colors.white, size: 16),
-                          SizedBox(width: 6),
-                          Text('保存', style: TextStyle(color: Colors.white, fontSize: 13)),
-                        ]),
+                        width: 96,
+                        height: 42,
+                        child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.check_rounded,
+                                  color: Colors.white, size: 16),
+                              SizedBox(width: 6),
+                              Text(
+                                '保存',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    height: 1.0,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ]),
                       ),
                   ],
                 ),
@@ -102,53 +123,70 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('API Key', style: Theme.of(context).textTheme.labelLarge),
+                            Text('API Key',
+                                style: Theme.of(context).textTheme.labelLarge),
                             const SizedBox(height: 8),
                             Row(children: [
                               Expanded(
                                 child: TextField(
                                   controller: _apiKeyController,
                                   obscureText: !_apiKeyVisible,
-                                  style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
-                                  onChanged: (_) => setState(() => _hasChanges = true),
-                                  decoration: const InputDecoration(
+                                  style: TextStyle(
+                                      color: textPrimary, fontSize: 14),
+                                  onChanged: (_) =>
+                                      setState(() => _hasChanges = true),
+                                  decoration: InputDecoration(
                                     hintText: 'sk-...',
-                                    hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 14),
+                                    hintStyle: TextStyle(
+                                        color: textMuted, fontSize: 14),
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.zero,
                                   ),
                                 ),
                               ),
                               GlassIconButton(
-                                onPressed: () => setState(() => _apiKeyVisible = !_apiKeyVisible),
-                                icon: Icon(_apiKeyVisible ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                                    color: AppColors.textMuted, size: 18),
+                                onPressed: () => setState(
+                                    () => _apiKeyVisible = !_apiKeyVisible),
+                                icon: Icon(
+                                    _apiKeyVisible
+                                        ? Icons.visibility_off_outlined
+                                        : Icons.visibility_outlined,
+                                    color: textMuted,
+                                    size: 18),
                               ),
                             ]),
                             const Divider(height: 20),
-                            Text('API Base URL', style: Theme.of(context).textTheme.labelLarge),
+                            Text('API Base URL',
+                                style: Theme.of(context).textTheme.labelLarge),
                             const SizedBox(height: 8),
                             TextField(
                               controller: _baseUrlController,
-                              style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
-                              onChanged: (_) => setState(() => _hasChanges = true),
-                              decoration: const InputDecoration(
+                              style:
+                                  TextStyle(color: textPrimary, fontSize: 14),
+                              onChanged: (_) =>
+                                  setState(() => _hasChanges = true),
+                              decoration: InputDecoration(
                                 hintText: 'https://api.openai.com/v1',
-                                hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 14),
+                                hintStyle:
+                                    TextStyle(color: textMuted, fontSize: 14),
                                 border: InputBorder.none,
                                 contentPadding: EdgeInsets.zero,
                               ),
                             ),
                             const Divider(height: 20),
-                            Text('模型', style: Theme.of(context).textTheme.labelLarge),
+                            Text('模型',
+                                style: Theme.of(context).textTheme.labelLarge),
                             const SizedBox(height: 8),
                             TextField(
                               controller: _modelController,
-                              style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
-                              onChanged: (_) => setState(() => _hasChanges = true),
-                              decoration: const InputDecoration(
+                              style:
+                                  TextStyle(color: textPrimary, fontSize: 14),
+                              onChanged: (_) =>
+                                  setState(() => _hasChanges = true),
+                              decoration: InputDecoration(
                                 hintText: 'gpt-4o-mini',
-                                hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 14),
+                                hintStyle:
+                                    TextStyle(color: textMuted, fontSize: 14),
                                 border: InputBorder.none,
                                 contentPadding: EdgeInsets.zero,
                               ),
@@ -156,7 +194,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           ],
                         ),
                       ),
-                    ).animate(delay: 100.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1),
+                    )
+                        .animate(delay: 100.ms)
+                        .fadeIn(duration: 400.ms)
+                        .slideY(begin: 0.1),
 
                     const SizedBox(height: 12),
                     // 预设服务提示
@@ -166,37 +207,68 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('兼容的服务', style: Theme.of(context).textTheme.labelLarge),
+                            Text('兼容的服务',
+                                style: Theme.of(context).textTheme.labelLarge),
                             const SizedBox(height: 8),
                             ...[
-                              ['OpenAI', 'https://api.openai.com/v1', 'gpt-4o-mini'],
-                              ['DeepSeek', 'https://api.deepseek.com/v1', 'deepseek-chat'],
-                              ['Moonshot', 'https://api.moonshot.cn/v1', 'moonshot-v1-8k'],
-                              ['Qwen (阿里云)', 'https://dashscope.aliyuncs.com/compatible-mode/v1', 'qwen-turbo'],
+                              [
+                                'OpenAI',
+                                'https://api.openai.com/v1',
+                                'gpt-4o-mini'
+                              ],
+                              [
+                                'DeepSeek',
+                                'https://api.deepseek.com/v1',
+                                'deepseek-chat'
+                              ],
+                              [
+                                'Moonshot',
+                                'https://api.moonshot.cn/v1',
+                                'moonshot-v1-8k'
+                              ],
+                              [
+                                'Qwen (阿里云)',
+                                'https://dashscope.aliyuncs.com/compatible-mode/v1',
+                                'qwen-turbo'
+                              ],
                             ].map((item) => Padding(
-                              padding: const EdgeInsets.only(bottom: 6),
-                              child: GestureDetector(
-                                onTap: () {
-                                  _baseUrlController.text = item[1];
-                                  _modelController.text = item[2];
-                                  setState(() => _hasChanges = true);
-                                },
-                                child: Row(children: [
-                                  Container(
-                                    width: 6, height: 6,
-                                    decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
+                                  padding: const EdgeInsets.only(bottom: 6),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      _baseUrlController.text = item[1];
+                                      _modelController.text = item[2];
+                                      setState(() => _hasChanges = true);
+                                    },
+                                    child: Row(children: [
+                                      Container(
+                                        width: 6,
+                                        height: 6,
+                                        decoration: const BoxDecoration(
+                                            color: AppColors.primary,
+                                            shape: BoxShape.circle),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(item[0],
+                                          style: TextStyle(
+                                              color: textSecondary,
+                                              fontSize: 13)),
+                                      const Spacer(),
+                                      Text('点击填入',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.copyWith(
+                                                  color: AppColors.primary)),
+                                    ]),
                                   ),
-                                  const SizedBox(width: 8),
-                                  Text(item[0], style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
-                                  const Spacer(),
-                                  Text('点击填入', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.primary)),
-                                ]),
-                              ),
-                            )),
+                                )),
                           ],
                         ),
                       ),
-                    ).animate(delay: 150.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1),
+                    )
+                        .animate(delay: 150.ms)
+                        .fadeIn(duration: 400.ms)
+                        .slideY(begin: 0.1),
 
                     const SizedBox(height: 20),
 
@@ -211,12 +283,16 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           const Divider(height: 20),
                           _InfoRow(label: '版本', value: '1.0.0'),
                           const Divider(height: 20),
-                          _InfoRow(label: 'UI 框架', value: 'Liquid Glass Widgets'),
+                          _InfoRow(
+                              label: 'UI 框架', value: 'Liquid Glass Widgets'),
                           const Divider(height: 20),
                           _InfoRow(label: '开发时间', value: '2026-04-20'),
                         ]),
                       ),
-                    ).animate(delay: 200.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1),
+                    )
+                        .animate(delay: 200.ms)
+                        .fadeIn(duration: 400.ms)
+                        .slideY(begin: 0.1),
 
                     const SizedBox(height: 20),
 
@@ -226,11 +302,17 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         onTap: _saveSettings,
                         width: 180,
                         height: 48,
-                        child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                          Icon(Icons.save_rounded, color: Colors.white),
-                          SizedBox(width: 8),
-                          Text('保存设置', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16)),
-                        ]),
+                        child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.save_rounded, color: Colors.white),
+                              SizedBox(width: 8),
+                              Text('保存设置',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16)),
+                            ]),
                       ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1),
                   ],
                 ),
@@ -249,7 +331,12 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(title, style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppColors.textSecondary));
+    return Text(
+      title,
+      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            color: AppColors.adaptiveTextSecondary(context),
+          ),
+    );
   }
 }
 
@@ -263,7 +350,9 @@ class _InfoRow extends StatelessWidget {
     return Row(children: [
       Text(label, style: Theme.of(context).textTheme.bodyMedium),
       const Spacer(),
-      Text(value, style: const TextStyle(color: AppColors.textMuted, fontSize: 13)),
+      Text(value,
+          style: TextStyle(
+              color: AppColors.adaptiveTextMuted(context), fontSize: 13)),
     ]);
   }
 }

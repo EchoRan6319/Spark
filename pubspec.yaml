@@ -27,7 +27,7 @@ dependencies:
   isar: ^3.1.0+1
   isar_flutter_libs:
     path: plugins/isar_flutter_libs
-  path_provider: ^2.1.5
+  path_provider: 2.1.4
 
   # 网络
   http: ^1.2.2
@@ -43,6 +43,9 @@ dependencies:
 
   # 动画
   flutter_animate: ^4.5.2
+
+dependency_overrides:
+  path_provider_android: 2.2.15
 
 dev_dependencies:
   flutter_test:

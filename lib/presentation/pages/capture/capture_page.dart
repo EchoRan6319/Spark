@@ -71,13 +71,14 @@ class _CapturePageState extends ConsumerState<CapturePage> {
       return;
     }
 
-    final colorValue = await ref.read(inspirationRepositoryProvider).getNextCardColor();
+    final colorValue =
+        await ref.read(inspirationRepositoryProvider).getNextCardColor();
     await ref.read(inspirationsProvider.notifier).add(
-      content: content,
-      tags: _tags,
-      emotion: _emotion,
-      colorValue: colorValue,
-    );
+          content: content,
+          tags: _tags,
+          emotion: _emotion,
+          colorValue: colorValue,
+        );
 
     // 清除草稿
     final settingsService = ref.read(settingsServiceProvider);
@@ -100,8 +101,12 @@ class _CapturePageState extends ConsumerState<CapturePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = AppColors.isDark(context);
+    final textPrimary = AppColors.adaptiveTextPrimary(context);
+    final textMuted = AppColors.adaptiveTextMuted(context);
+
     return AnimatedGradientBackground(
-      colors: AppColors.captureGradient,
+      colors: AppColors.captureGradientFor(context),
       child: SafeArea(
         child: Column(
           children: [
@@ -113,18 +118,32 @@ class _CapturePageState extends ConsumerState<CapturePage> {
                 children: [
                   GlassIconButton(
                     onPressed: () => context.pop(),
-                    icon: const Icon(Icons.close_rounded, color: AppColors.textSecondary),
+                    icon: Icon(Icons.close_rounded,
+                        color: AppColors.adaptiveTextSecondary(context)),
                   ),
-                  Text('记录灵感', style: Theme.of(context).textTheme.headlineSmall),
+                  Text('记录灵感',
+                      style: Theme.of(context).textTheme.headlineSmall),
                   GlassButton.custom(
                     onTap: _save,
-                    width: 80,
-                    height: 40,
-                    child: Row(mainAxisSize: MainAxisSize.min, children: [
-                      const Icon(Icons.check_rounded, color: Colors.white, size: 18),
-                      const SizedBox(width: 6),
-                      const Text('保存', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-                    ]),
+                    width: 96,
+                    height: 42,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.check_rounded,
+                              color: Colors.white, size: 18),
+                          const SizedBox(width: 6),
+                          const Text(
+                            '保存',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              height: 1.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ]),
                   ),
                 ],
               ),
@@ -146,19 +165,22 @@ class _CapturePageState extends ConsumerState<CapturePage> {
                         focusNode: _contentFocus,
                         maxLines: null,
                         minLines: 8,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
-                          color: AppColors.textPrimary,
+                          color: textPrimary,
                           height: 1.7,
                         ),
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: '✨ 在这里记录你的灵光一现...',
                           border: InputBorder.none,
-                          contentPadding: EdgeInsets.all(20),
-                          hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 18),
+                          contentPadding: const EdgeInsets.all(20),
+                          hintStyle: TextStyle(color: textMuted, fontSize: 18),
                         ),
                       ),
-                    ).animate(delay: 100.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1),
+                    )
+                        .animate(delay: 100.ms)
+                        .fadeIn(duration: 400.ms)
+                        .slideY(begin: 0.1),
 
                     const SizedBox(height: 16),
 
@@ -169,37 +191,70 @@ class _CapturePageState extends ConsumerState<CapturePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('当前心情', style: Theme.of(context).textTheme.titleMedium),
+                            Text('当前心情',
+                                style: Theme.of(context).textTheme.titleMedium),
                             const SizedBox(height: 12),
                             Wrap(
                               spacing: 8,
                               runSpacing: 8,
-                              children: AppColors.emotionColors.keys.map((emotion) {
+                              children:
+                                  AppColors.emotionColors.keys.map((emotion) {
                                 final isSelected = _emotion == emotion;
                                 final color = AppColors.emotionColors[emotion]!;
                                 return GestureDetector(
-                                  onTap: () => setState(() => _emotion = emotion),
+                                  onTap: () =>
+                                      setState(() => _emotion = emotion),
                                   child: AnimatedContainer(
                                     duration: const Duration(milliseconds: 200),
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                    constraints:
+                                        const BoxConstraints(minHeight: 34),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 7),
                                     decoration: BoxDecoration(
-                                      color: isSelected ? color.withOpacity(0.3) : Colors.white.withOpacity(0.05),
-                                      borderRadius: BorderRadius.circular(AppSizes.radiusCircle),
+                                      color: isSelected
+                                          ? color
+                                              .withOpacity(isDark ? 0.3 : 0.18)
+                                          : (isDark
+                                              ? Colors.white.withOpacity(0.05)
+                                              : Colors.black.withOpacity(0.04)),
+                                      borderRadius: BorderRadius.circular(
+                                          AppSizes.radiusCircle),
                                       border: Border.all(
-                                        color: isSelected ? color : Colors.white.withOpacity(0.1),
+                                        color: isSelected
+                                            ? color
+                                            : (isDark
+                                                ? Colors.white.withOpacity(0.1)
+                                                : Colors.black
+                                                    .withOpacity(0.1)),
                                         width: isSelected ? 1.5 : 0.5,
                                       ),
                                     ),
-                                    child: Row(mainAxisSize: MainAxisSize.min, children: [
-                                      Text(AppUtils.getEmotionEmoji(emotion), style: const TextStyle(fontSize: 14)),
-                                      const SizedBox(width: 4),
-                                      Text(AppUtils.getEmotionLabel(emotion),
-                                          style: TextStyle(
-                                            color: isSelected ? color : AppColors.textMuted,
-                                            fontSize: 13,
-                                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                                          )),
-                                    ]),
+                                    child: Center(
+                                      child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                                AppUtils.getEmotionEmoji(
+                                                    emotion),
+                                                style: const TextStyle(
+                                                    fontSize: 14)),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              AppUtils.getEmotionLabel(emotion),
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: isSelected
+                                                    ? color
+                                                    : textMuted,
+                                                fontSize: 13,
+                                                height: 1.0,
+                                                fontWeight: isSelected
+                                                    ? FontWeight.w600
+                                                    : FontWeight.w400,
+                                              ),
+                                            ),
+                                          ]),
+                                    ),
                                   ),
                                 );
                               }).toList(),
@@ -207,7 +262,10 @@ class _CapturePageState extends ConsumerState<CapturePage> {
                           ],
                         ),
                       ),
-                    ).animate(delay: 200.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1),
+                    )
+                        .animate(delay: 200.ms)
+                        .fadeIn(duration: 400.ms)
+                        .slideY(begin: 0.1),
 
                     const SizedBox(height: 16),
 
@@ -218,28 +276,49 @@ class _CapturePageState extends ConsumerState<CapturePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('标签', style: Theme.of(context).textTheme.titleMedium),
+                            Text('标签',
+                                style: Theme.of(context).textTheme.titleMedium),
                             const SizedBox(height: 12),
                             if (_tags.isNotEmpty)
                               Wrap(
                                 spacing: 6,
                                 runSpacing: 6,
-                                children: _tags.map((tag) => GestureDetector(
-                                  onTap: () => setState(() => _tags.remove(tag)),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primary.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(AppSizes.radiusCircle),
-                                      border: Border.all(color: AppColors.primary.withOpacity(0.4), width: 0.5),
-                                    ),
-                                    child: Row(mainAxisSize: MainAxisSize.min, children: [
-                                      Text('#$tag', style: const TextStyle(color: AppColors.primaryLight, fontSize: 12)),
-                                      const SizedBox(width: 4),
-                                      const Icon(Icons.close_rounded, size: 12, color: AppColors.primaryLight),
-                                    ]),
-                                  ),
-                                )).toList(),
+                                children: _tags
+                                    .map((tag) => GestureDetector(
+                                          onTap: () =>
+                                              setState(() => _tags.remove(tag)),
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.primary
+                                                  .withOpacity(0.2),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      AppSizes.radiusCircle),
+                                              border: Border.all(
+                                                  color: AppColors.primary
+                                                      .withOpacity(0.4),
+                                                  width: 0.5),
+                                            ),
+                                            child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text('#$tag',
+                                                      style: const TextStyle(
+                                                          color: AppColors
+                                                              .primaryLight,
+                                                          fontSize: 12)),
+                                                  const SizedBox(width: 4),
+                                                  const Icon(
+                                                      Icons.close_rounded,
+                                                      size: 12,
+                                                      color: AppColors
+                                                          .primaryLight),
+                                                ]),
+                                          ),
+                                        ))
+                                    .toList(),
                               ),
                             if (_tags.isNotEmpty) const SizedBox(height: 10),
                             Row(
@@ -247,26 +326,32 @@ class _CapturePageState extends ConsumerState<CapturePage> {
                                 Expanded(
                                   child: TextField(
                                     controller: _tagController,
-                                    style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
-                                    decoration: const InputDecoration(
+                                    style: TextStyle(
+                                        color: textPrimary, fontSize: 14),
+                                    decoration: InputDecoration(
                                       hintText: '添加标签，按回车确认...',
                                       border: InputBorder.none,
                                       contentPadding: EdgeInsets.zero,
-                                      hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 14),
+                                      hintStyle: TextStyle(
+                                          color: textMuted, fontSize: 14),
                                     ),
                                     onSubmitted: _addTag,
                                   ),
                                 ),
                                 GlassIconButton(
                                   onPressed: () => _addTag(_tagController.text),
-                                  icon: const Icon(Icons.add_rounded, size: 20, color: AppColors.primary),
+                                  icon: const Icon(Icons.add_rounded,
+                                      size: 20, color: AppColors.primary),
                                 ),
                               ],
                             ),
                           ],
                         ),
                       ),
-                    ).animate(delay: 300.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1),
+                    )
+                        .animate(delay: 300.ms)
+                        .fadeIn(duration: 400.ms)
+                        .slideY(begin: 0.1),
 
                     const SizedBox(height: 100),
                   ],

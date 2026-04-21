@@ -42,6 +42,10 @@ class _ProjectDetailPageState extends ConsumerState<ProjectDetailPage> {
       error: (e, _) => Scaffold(body: Center(child: Text('错误: $e'))),
       data: (projects) {
         final project = _getProject(projects);
+        final textPrimary = AppColors.adaptiveTextPrimary(context);
+        final textSecondary = AppColors.adaptiveTextSecondary(context);
+        final textMuted = AppColors.adaptiveTextMuted(context);
+        final isDark = AppColors.isDark(context);
         if (project == null) {
           return Scaffold(
             body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -54,7 +58,10 @@ class _ProjectDetailPageState extends ConsumerState<ProjectDetailPage> {
         final color = Color(project.colorValue);
 
         return AnimatedGradientBackground(
-          colors: [color.withOpacity(0.25), const Color(0xFF0D0820), const Color(0xFF0D0820)],
+          colors: [
+            color.withOpacity(isDark ? 0.25 : 0.14),
+            ...AppColors.projectGradientFor(context).skip(1),
+          ],
           child: Scaffold(
             backgroundColor: Colors.transparent,
             body: SafeArea(
@@ -68,7 +75,7 @@ class _ProjectDetailPageState extends ConsumerState<ProjectDetailPage> {
                       children: [
                         GlassIconButton(
                           onPressed: () => context.pop(),
-                          icon: const Icon(Icons.arrow_back_ios_rounded, color: AppColors.textSecondary),
+                          icon: Icon(Icons.arrow_back_ios_rounded, color: textSecondary),
                         ),
                         GlassPullDownButton(
                           items: [
@@ -94,7 +101,7 @@ class _ProjectDetailPageState extends ConsumerState<ProjectDetailPage> {
                               isDestructive: true,
                             ),
                           ],
-                          icon: const Icon(Icons.more_horiz_rounded, color: AppColors.textSecondary),
+                          icon: Icon(Icons.more_horiz_rounded, color: textSecondary),
                         ),
                       ],
                     ),
@@ -109,7 +116,7 @@ class _ProjectDetailPageState extends ConsumerState<ProjectDetailPage> {
                           child: tasksAsync.when(
                             loading: () => const Padding(padding: EdgeInsets.all(20), child: CircularProgressIndicator()),
                             error: (e, _) => Padding(padding: const EdgeInsets.all(20), child: Text('加载任务失败: $e')),
-                            data: (tasks) => _buildTasks(context, ref, project, tasks, color),
+                            data: (tasks) => _buildTasks(context, ref, project, tasks, color, textPrimary, textMuted),
                           ),
                         ),
                         const SliverToBoxAdapter(child: SizedBox(height: 80)),
@@ -126,6 +133,7 @@ class _ProjectDetailPageState extends ConsumerState<ProjectDetailPage> {
   }
 
   Widget _buildHeader(BuildContext context, SparkProject project, Color color) {
+    final isDark = AppColors.isDark(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: GlassPanel(
@@ -135,7 +143,10 @@ class _ProjectDetailPageState extends ConsumerState<ProjectDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(project.title,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w800)),
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    color: AppColors.adaptiveTextPrimary(context),
+                    fontWeight: FontWeight.w800,
+                  )),
               if (project.description != null) ...[
                 const SizedBox(height: 8),
                 Text(project.description!, style: Theme.of(context).textTheme.bodyMedium),
@@ -147,7 +158,7 @@ class _ProjectDetailPageState extends ConsumerState<ProjectDetailPage> {
                     borderRadius: BorderRadius.circular(6),
                     child: LinearProgressIndicator(
                       value: project.progress,
-                      backgroundColor: Colors.white.withOpacity(0.08),
+                      backgroundColor: isDark ? Colors.white.withOpacity(0.08) : Colors.black.withOpacity(0.08),
                       valueColor: AlwaysStoppedAnimation<Color>(color),
                       minHeight: 10,
                     ),
@@ -166,7 +177,15 @@ class _ProjectDetailPageState extends ConsumerState<ProjectDetailPage> {
     );
   }
 
-  Widget _buildTasks(BuildContext context, WidgetRef ref, SparkProject project, List<SparkTask> tasks, Color color) {
+  Widget _buildTasks(
+    BuildContext context,
+    WidgetRef ref,
+    SparkProject project,
+    List<SparkTask> tasks,
+    Color color,
+    Color textPrimary,
+    Color textMuted,
+  ) {
     final todo = tasks.where((t) => !t.isCompleted).toList();
     final done = tasks.where((t) => t.isCompleted).toList();
 
@@ -191,12 +210,12 @@ class _ProjectDetailPageState extends ConsumerState<ProjectDetailPage> {
                 Expanded(
                   child: TextField(
                     controller: _taskController,
-                    style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
-                    decoration: const InputDecoration(
+                    style: TextStyle(color: textPrimary, fontSize: 14),
+                    decoration: InputDecoration(
                       hintText: '添加新任务...',
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.zero,
-                      hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 14),
+                      hintStyle: TextStyle(color: textMuted, fontSize: 14),
                     ),
                     onSubmitted: (v) => _addTask(ref, project, v),
                   ),
@@ -218,7 +237,7 @@ class _ProjectDetailPageState extends ConsumerState<ProjectDetailPage> {
                 ],
               ] else ...[
                 const SizedBox(height: 16),
-                const Center(child: Text('还没有任务，添加第一个！', style: TextStyle(color: AppColors.textMuted, fontSize: 13))),
+                Center(child: Text('还没有任务，添加第一个！', style: TextStyle(color: textMuted, fontSize: 13))),
               ],
             ],
           ),
@@ -241,9 +260,12 @@ class _ProjectDetailPageState extends ConsumerState<ProjectDetailPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1040),
-        title: const Text('删除项目', style: TextStyle(color: AppColors.textPrimary)),
-        content: const Text('确定要删除这个项目吗？包含的所有任务也会被删除。', style: TextStyle(color: AppColors.textSecondary)),
+        backgroundColor: Theme.of(ctx).colorScheme.surface,
+        title: Text('删除项目', style: TextStyle(color: AppColors.adaptiveTextPrimary(ctx))),
+        content: Text(
+          '确定要删除这个项目吗？包含的所有任务也会被删除。',
+          style: TextStyle(color: AppColors.adaptiveTextSecondary(ctx)),
+        ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('取消')),
           TextButton(
@@ -269,6 +291,8 @@ class _TaskItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final textPrimary = AppColors.adaptiveTextPrimary(context);
+    final textMuted = AppColors.adaptiveTextMuted(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -286,7 +310,7 @@ class _TaskItem extends ConsumerWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: task.isCompleted ? color.withOpacity(0.3) : Colors.transparent,
-                border: Border.all(color: task.isCompleted ? color : AppColors.textMuted, width: 1.5),
+                border: Border.all(color: task.isCompleted ? color : textMuted, width: 1.5),
               ),
               child: task.isCompleted
                   ? Icon(Icons.check_rounded, size: 13, color: color)
@@ -298,7 +322,7 @@ class _TaskItem extends ConsumerWidget {
             child: Text(
               task.title,
               style: TextStyle(
-                color: task.isCompleted ? AppColors.textMuted : AppColors.textPrimary,
+                color: task.isCompleted ? textMuted : textPrimary,
                 decoration: task.isCompleted ? TextDecoration.lineThrough : null,
                 fontSize: 14,
               ),

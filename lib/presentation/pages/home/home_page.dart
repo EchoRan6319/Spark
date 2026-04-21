@@ -20,7 +20,7 @@ class HomePage extends ConsumerWidget {
     final projectsAsync = ref.watch(projectsProvider);
 
     return AnimatedGradientBackground(
-      colors: AppColors.homeGradient,
+      colors: AppColors.homeGradientFor(context),
       child: SafeArea(
         bottom: false,
         child: CustomScrollView(
@@ -56,6 +56,7 @@ class HomePage extends ConsumerWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final isDark = AppColors.isDark(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
       child: Row(
@@ -65,33 +66,41 @@ class HomePage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ShaderMask(
-                shaderCallback: (bounds) => const LinearGradient(
-                  colors: [AppColors.primaryLight, AppColors.pink],
+                shaderCallback: (bounds) => LinearGradient(
+                  colors: isDark
+                      ? const [AppColors.primaryLight, AppColors.pink]
+                      : const [AppColors.primaryDark, AppColors.pink],
                 ).createShader(bounds),
                 child: Text('✨ 灵光',
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                    )),
+                          color: AppColors.adaptiveTextPrimary(context),
+                          fontWeight: FontWeight.w800,
+                        )),
               ),
               Text(
-                AppUtils.formatShortDate(DateTime.now()) + ' · 今天是充满灵光的一天',
+                '${AppUtils.formatShortDate(DateTime.now())} · 今天是充满灵光的一天',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],
           ),
           GlassIconButton(
             onPressed: () => context.push('/settings'),
-            icon: const Icon(Icons.settings_outlined, color: AppColors.textSecondary),
+            icon: Icon(Icons.settings_outlined,
+                color: AppColors.adaptiveTextSecondary(context)),
           ),
         ],
       ),
     ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.1);
   }
 
-  Widget _buildStats(BuildContext context, List<Inspiration> list, WidgetRef ref) {
-    final streak = AppUtils.calculateStreak(list.map((i) => i.createdAt).toList());
+  Widget _buildStats(
+      BuildContext context, List<Inspiration> list, WidgetRef ref) {
+    final streak =
+        AppUtils.calculateStreak(list.map((i) => i.createdAt).toList());
     final projectCount = ref.watch(projectsProvider).value?.length ?? 0;
+    final dividerColor = AppColors.isDark(context)
+        ? Colors.white.withOpacity(0.1)
+        : Colors.black.withOpacity(0.08);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
@@ -102,7 +111,8 @@ class HomePage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(children: [
-                const Icon(Icons.bar_chart_rounded, color: AppColors.primary, size: 18),
+                const Icon(Icons.bar_chart_rounded,
+                    color: AppColors.primary, size: 18),
                 const SizedBox(width: 8),
                 Text('创意统计', style: Theme.of(context).textTheme.titleMedium),
               ]),
@@ -110,11 +120,18 @@ class HomePage extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _StatItem(value: '${list.length}', label: '灵感数', color: AppColors.primary),
-                  Container(width: 1, height: 40, color: Colors.white.withOpacity(0.1)),
-                  _StatItem(value: '$projectCount', label: '项目数', color: AppColors.teal),
-                  Container(width: 1, height: 40, color: Colors.white.withOpacity(0.1)),
-                  _StatItem(value: '$streak', label: '连续天', color: AppColors.accent),
+                  _StatItem(
+                      value: '${list.length}',
+                      label: '灵感数',
+                      color: AppColors.primary),
+                  Container(width: 1, height: 40, color: dividerColor),
+                  _StatItem(
+                      value: '$projectCount',
+                      label: '项目数',
+                      color: AppColors.teal),
+                  Container(width: 1, height: 40, color: dividerColor),
+                  _StatItem(
+                      value: '$streak', label: '连续天', color: AppColors.accent),
                 ],
               ),
             ],
@@ -125,7 +142,9 @@ class HomePage extends ConsumerWidget {
   }
 
   Widget _buildProjects(BuildContext context, List<SparkProject> projects) {
-    final active = projects.where((p) => p.status == 'in_progress' || p.status == 'planning').toList();
+    final active = projects
+        .where((p) => p.status == 'in_progress' || p.status == 'planning')
+        .toList();
     if (active.isEmpty) return const SizedBox();
 
     return Padding(
@@ -133,37 +152,49 @@ class HomePage extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _SectionHeader(title: '🚀 进行中的项目', color: AppColors.teal, onMore: () => context.go('/project')),
+          _SectionHeader(
+              title: '🚀 进行中的项目',
+              color: AppColors.teal,
+              onMore: () => context.go('/project')),
           const SizedBox(height: 8),
           ...active.take(3).map((p) => Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: GestureDetector(
-              onTap: () => context.push('/project/${p.uid}'),
-              child: GlassListTile(
-                leading: Container(
-                  width: 36, height: 36,
-                  decoration: BoxDecoration(
-                    color: Color(p.colorValue).withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
+                padding: const EdgeInsets.only(bottom: 8),
+                child: GestureDetector(
+                  onTap: () => context.push('/project/${p.uid}'),
+                  child: GlassListTile(
+                    leading: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: Color(p.colorValue).withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(Icons.folder_rounded,
+                          color: Color(p.colorValue), size: 18),
+                    ),
+                    title: Text(p.title,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.adaptiveTextPrimary(context),
+                        )),
+                    subtitle: ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: p.progress,
+                        backgroundColor: Colors.white.withOpacity(0.1),
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Color(p.colorValue)),
+                        minHeight: 4,
+                      ),
+                    ),
+                    trailing: Text('${(p.progress * 100).toInt()}%',
+                        style: TextStyle(
+                            color: Color(p.colorValue),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12)),
                   ),
-                  child: Icon(Icons.folder_rounded, color: Color(p.colorValue), size: 18),
                 ),
-                title: Text(p.title,
-                    style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-                subtitle: ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: p.progress,
-                    backgroundColor: Colors.white.withOpacity(0.1),
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(p.colorValue)),
-                    minHeight: 4,
-                  ),
-                ),
-                trailing: Text('${(p.progress * 100).toInt()}%',
-                    style: TextStyle(color: Color(p.colorValue), fontWeight: FontWeight.w600, fontSize: 12)),
-              ),
-            ),
-          )),
+              )),
         ],
       ),
     ).animate(delay: 200.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1);
@@ -176,12 +207,18 @@ class HomePage extends ConsumerWidget {
         child: Column(
           children: [
             const Text('✨', style: TextStyle(fontSize: 64))
-                .animate().scale(duration: 600.ms, curve: Curves.elasticOut),
+                .animate()
+                .scale(duration: 600.ms, curve: Curves.elasticOut),
             const SizedBox(height: 16),
-            Text('还没有灵感', style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: AppColors.textSecondary)),
+            Text('还没有灵感',
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineSmall
+                    ?.copyWith(color: AppColors.textSecondary)),
             const SizedBox(height: 8),
             Text('点击下方 + 按钮开始记录你的第一个灵感！',
-                textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyMedium),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium),
           ],
         ),
       );
@@ -192,23 +229,34 @@ class HomePage extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _SectionHeader(title: '💡 最近的灵感', color: AppColors.accent, onMore: () => context.go('/collection')),
+          _SectionHeader(
+              title: '💡 最近的灵感',
+              color: AppColors.accent,
+              onMore: () => context.go('/collection')),
           const SizedBox(height: 8),
           ...list.take(3).map((insp) => Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: GestureDetector(
-              onTap: () => context.push('/detail/${insp.uid}'),
-              child: GlassListTile(
-                leading: Text(AppUtils.getEmotionEmoji(insp.emotion), style: const TextStyle(fontSize: 22)),
-                title: Text(AppUtils.getSummary(insp.content),
-                    style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w500),
-                    maxLines: 1, overflow: TextOverflow.ellipsis),
-                subtitle: Text(AppUtils.formatRelativeDate(insp.createdAt),
-                    style: TextStyle(color: Color(insp.colorValue).withOpacity(0.7), fontSize: 11)),
-                trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 12, color: AppColors.textMuted),
-              ),
-            ),
-          )),
+                padding: const EdgeInsets.only(bottom: 8),
+                child: GestureDetector(
+                  onTap: () => context.push('/detail/${insp.uid}'),
+                  child: GlassListTile(
+                    leading: Text(AppUtils.getEmotionEmoji(insp.emotion),
+                        style: const TextStyle(fontSize: 22)),
+                    title: Text(AppUtils.getSummary(insp.content),
+                        style: TextStyle(
+                          color: AppColors.adaptiveTextPrimary(context),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis),
+                    subtitle: Text(AppUtils.formatRelativeDate(insp.createdAt),
+                        style: TextStyle(
+                            color: Color(insp.colorValue).withOpacity(0.7),
+                            fontSize: 11)),
+                    trailing: const Icon(Icons.arrow_forward_ios_rounded,
+                        size: 12, color: AppColors.textMuted),
+                  ),
+                ),
+              )),
         ],
       ),
     ).animate(delay: 300.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1);
@@ -219,12 +267,15 @@ class _StatItem extends StatelessWidget {
   final String value;
   final String label;
   final Color color;
-  const _StatItem({required this.value, required this.label, required this.color});
+  const _StatItem(
+      {required this.value, required this.label, required this.color});
 
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      Text(value, style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: color)),
+      Text(value,
+          style: TextStyle(
+              fontSize: 28, fontWeight: FontWeight.w800, color: color)),
       const SizedBox(height: 2),
       Text(label, style: Theme.of(context).textTheme.bodySmall),
     ]);
@@ -247,7 +298,10 @@ class _SectionHeader extends StatelessWidget {
           GestureDetector(
             onTap: onMore,
             child: Text('查看全部 →',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.primary)),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.copyWith(color: AppColors.primary)),
           ),
       ],
     );

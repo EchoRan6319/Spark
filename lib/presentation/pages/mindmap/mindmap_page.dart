@@ -23,6 +23,7 @@ class MindmapPage extends ConsumerWidget {
       loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, _) => Scaffold(body: Center(child: Text('错误: $e'))),
       data: (list) {
+        final textSecondary = AppColors.adaptiveTextSecondary(context);
         Inspiration? inspiration;
         try { inspiration = list.firstWhere((i) => i.uid == inspirationUid); } catch (_) {}
         if (inspiration == null) {
@@ -32,7 +33,7 @@ class MindmapPage extends ConsumerWidget {
         }
 
         return GradientBackground(
-          colors: const [Color(0xFF0D0820), Color(0xFF1A0D2E), Color(0xFF0D1A2E)],
+          colors: AppColors.mindmapGradientFor(context),
           child: Scaffold(
             backgroundColor: Colors.transparent,
             body: SafeArea(
@@ -45,7 +46,7 @@ class MindmapPage extends ConsumerWidget {
                       children: [
                         GlassIconButton(
                           onPressed: () => context.pop(),
-                          icon: const Icon(Icons.arrow_back_ios_rounded, color: AppColors.textSecondary),
+                          icon: Icon(Icons.arrow_back_ios_rounded, color: textSecondary),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -113,7 +114,12 @@ class MindmapPage extends ConsumerWidget {
         children: [
           const Text('🗺️', style: TextStyle(fontSize: 64)).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
           const SizedBox(height: 20),
-          Text('还没有思维导图', style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: AppColors.textSecondary)),
+          Text(
+            '还没有思维导图',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              color: AppColors.adaptiveTextSecondary(context),
+            ),
+          ),
           const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40),

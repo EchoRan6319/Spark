@@ -20,76 +20,164 @@ class MainShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentIndex = _getCurrentIndex(context);
+    final isDark = AppColors.isDark(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0820),
+      backgroundColor: isDark ? const Color(0xFF0D0820) : AppColors.bgLight,
       extendBody: true,
       body: child,
-      floatingActionButton: _buildFab(context),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: _buildBottomBar(context, currentIndex),
     );
   }
 
-  Widget _buildFab(BuildContext context) {
-    return GestureDetector(
-      onTap: () => context.push('/capture'),
-      child: Container(
-        width: 58,
-        height: 58,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [AppColors.primary, AppColors.primaryDark],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withOpacity(0.5),
-              blurRadius: 20,
-              spreadRadius: 2,
+  Widget _buildBottomBar(BuildContext context, int currentIndex) {
+    final isDark = AppColors.isDark(context);
+
+    Widget tabIcon({
+      required bool selected,
+      required IconData selectedIcon,
+      required IconData icon,
+      required Color selectedColor,
+    }) {
+      return AnimatedScale(
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOutCubic,
+        scale: selected ? 1.15 : 1.0,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            if (selected)
+              Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      selectedColor.withOpacity(isDark ? 0.45 : 0.28),
+                      selectedColor.withOpacity(0.0),
+                    ],
+                  ),
+                ),
+              ),
+            Icon(
+              selected ? selectedIcon : icon,
+              color: selected ? selectedColor : AppColors.adaptiveTextMuted(context),
             ),
+            if (selected)
+              Positioned(
+                top: 3,
+                child: Container(
+                  width: 16,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(99),
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.white.withOpacity(isDark ? 0.38 : 0.48),
+                        Colors.white.withOpacity(0.0),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
-        child: const Icon(Icons.add_rounded, color: Colors.white, size: 28),
-      ),
-    );
-  }
+      );
+    }
 
-  Widget _buildBottomBar(BuildContext context, int currentIndex) {
     return GlassBottomBar(
       tabs: [
         GlassBottomBarTab(
           label: AppStrings.navHome,
-          icon: Icon(
-            currentIndex == 0 ? Icons.home_rounded : Icons.home_outlined,
-            color: currentIndex == 0 ? AppColors.primary : AppColors.textMuted,
+          icon: tabIcon(
+            selected: currentIndex == 0,
+            selectedIcon: Icons.home_rounded,
+            icon: Icons.home_outlined,
+            selectedColor: AppColors.primary,
           ),
         ),
         GlassBottomBarTab(
           label: AppStrings.navCollection,
-          icon: Icon(
-            currentIndex == 1 ? Icons.lightbulb_rounded : Icons.lightbulb_outline_rounded,
-            color: currentIndex == 1 ? AppColors.accent : AppColors.textMuted,
+          icon: tabIcon(
+            selected: currentIndex == 1,
+            selectedIcon: Icons.lightbulb_rounded,
+            icon: Icons.lightbulb_outline_rounded,
+            selectedColor: AppColors.accent,
+          ),
+        ),
+        GlassBottomBarTab(
+          label: '添加',
+          icon: Transform.translate(
+            offset: const Offset(0, -9),
+            child: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [AppColors.primary, AppColors.primaryDark],
+                ),
+                border: Border.all(
+                  color: Colors.white.withOpacity(isDark ? 0.28 : 0.52),
+                  width: 0.9,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withOpacity(0.55),
+                    blurRadius: 18,
+                    spreadRadius: 1.5,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Positioned(
+                    top: 7,
+                    child: Container(
+                      width: 22,
+                      height: 7,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(99),
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.white.withOpacity(isDark ? 0.46 : 0.64),
+                            Colors.white.withOpacity(0.0),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const Icon(Icons.add_rounded, color: Colors.white, size: 24),
+                ],
+              ),
+            ),
           ),
         ),
         GlassBottomBarTab(
           label: AppStrings.navProjects,
-          icon: Icon(
-            currentIndex == 2 ? Icons.folder_rounded : Icons.folder_outlined,
-            color: currentIndex == 2 ? AppColors.teal : AppColors.textMuted,
+          icon: tabIcon(
+            selected: currentIndex == 2,
+            selectedIcon: Icons.folder_rounded,
+            icon: Icons.folder_outlined,
+            selectedColor: AppColors.teal,
           ),
         ),
         GlassBottomBarTab(
           label: AppStrings.navMe,
-          icon: Icon(
-            currentIndex == 3 ? Icons.auto_awesome_rounded : Icons.auto_awesome_outlined,
-            color: currentIndex == 3 ? AppColors.pink : AppColors.textMuted,
+          icon: tabIcon(
+            selected: currentIndex == 3,
+            selectedIcon: Icons.auto_awesome_rounded,
+            icon: Icons.auto_awesome_outlined,
+            selectedColor: AppColors.pink,
           ),
         ),
       ],
-      selectedIndex: currentIndex,
+      selectedIndex: currentIndex >= 2 ? currentIndex + 1 : currentIndex,
       onTabSelected: (index) {
         switch (index) {
           case 0:
@@ -99,9 +187,12 @@ class MainShell extends StatelessWidget {
             context.go('/collection');
             break;
           case 2:
-            context.go('/project');
+            context.push('/capture');
             break;
           case 3:
+            context.go('/project');
+            break;
+          case 4:
             context.go('/serendipity');
             break;
         }

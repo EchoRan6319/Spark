@@ -26,6 +26,9 @@ class InspirationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = Color(inspiration.colorValue);
     final emotion = inspiration.emotion;
+    final isDark = AppColors.isDark(context);
+    final textPrimary = AppColors.adaptiveTextPrimary(context);
+    final textMuted = AppColors.adaptiveTextMuted(context);
 
     return GestureDetector(
       onTap: onTap,
@@ -37,8 +40,8 @@ class InspirationCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                color.withOpacity(0.2),
-                color.withOpacity(0.05),
+                color.withOpacity(isDark ? 0.2 : 0.12),
+                color.withOpacity(isDark ? 0.05 : 0.03),
               ],
             ),
           ),
@@ -72,7 +75,7 @@ class InspirationCard extends StatelessWidget {
               Text(
                 AppUtils.getSummary(inspiration.content),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textPrimary,
+                  color: textPrimary,
                   fontWeight: FontWeight.w500,
                   height: 1.5,
                 ),
@@ -110,7 +113,7 @@ class InspirationCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.chat_bubble_outline_rounded,
-                            size: 12, color: AppColors.textMuted),
+                            size: 12, color: textMuted),
                         const SizedBox(width: 2),
                         Text(
                           '${inspiration.supplements.length}',
@@ -139,10 +142,11 @@ class _EmotionBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = AppColors.isDark(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withOpacity(isDark ? 0.15 : 0.1),
         borderRadius: BorderRadius.circular(AppSizes.radiusCircle),
         border: Border.all(color: color.withOpacity(0.3), width: 0.5),
       ),
@@ -173,10 +177,11 @@ class _TagChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = AppColors.isDark(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withOpacity(isDark ? 0.1 : 0.07),
         borderRadius: BorderRadius.circular(AppSizes.radiusCircle),
       ),
       child: Text(
@@ -249,7 +254,7 @@ class InspirationHeroCard extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontSize: 18,
                   height: 1.7,
-                  color: AppColors.textPrimary,
+                  color: AppColors.adaptiveTextPrimary(context),
                 ),
               ),
               if (inspiration.tags.isNotEmpty) ...[

@@ -66,11 +66,15 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
       loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, _) => Scaffold(body: Center(child: Text('错误: $e'))),
       data: (list) {
+        final textPrimary = AppColors.adaptiveTextPrimary(context);
+        final textSecondary = AppColors.adaptiveTextSecondary(context);
+        final textMuted = AppColors.adaptiveTextMuted(context);
+        final isDark = AppColors.isDark(context);
         Inspiration? inspiration;
         try { inspiration = list.firstWhere((i) => i.uid == widget.inspirationUid); } catch (_) {}
 
         return GradientBackground(
-          colors: const [Color(0xFF0D0820), Color(0xFF0D1A35), Color(0xFF0D0820)],
+          colors: AppColors.aiChatGradientFor(context),
           child: Scaffold(
             backgroundColor: Colors.transparent,
             body: SafeArea(
@@ -82,7 +86,7 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                     child: Row(children: [
                       GlassIconButton(
                         onPressed: () => context.pop(),
-                        icon: const Icon(Icons.arrow_back_ios_rounded, color: AppColors.textSecondary),
+                        icon: Icon(Icons.arrow_back_ios_rounded, color: textSecondary),
                       ),
                       const SizedBox(width: 12),
                       const Text('🤖', style: TextStyle(fontSize: 24)),
@@ -110,7 +114,7 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                           padding: const EdgeInsets.all(12),
                           child: Text(
                             AppUtils.truncateText(inspiration.content, 100),
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.textMuted, fontStyle: FontStyle.italic),
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: textMuted, fontStyle: FontStyle.italic),
                           ),
                         ),
                       ),
@@ -125,7 +129,7 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                             child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                               const Text('💬', style: TextStyle(fontSize: 48)).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
                               const SizedBox(height: 12),
-                              Text('与 AI 探讨你的灵感', style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: AppColors.textMuted)),
+                              Text('与 AI 探讨你的灵感', style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: textMuted)),
                               const SizedBox(height: 4),
                               Text('可以问 AI 评估可行性、提供建议等', style: Theme.of(context).textTheme.bodySmall),
                             ]),
@@ -144,6 +148,7 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                                 content: msg.content,
                                 isUser: msg.role == 'user',
                                 index: i,
+                                isDark: isDark,
                               );
                             },
                           ),
@@ -180,7 +185,7 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                               borderRadius: BorderRadius.circular(AppSizes.radiusCircle),
                               border: Border.all(color: AppColors.primary.withOpacity(0.3), width: 0.5),
                             ),
-                            child: Text(q, style: const TextStyle(color: AppColors.primaryLight, fontSize: 12)),
+                            child: Text(q, style: TextStyle(color: isDark ? AppColors.primaryLight : AppColors.primaryDark, fontSize: 12)),
                           ),
                         )).toList(),
                       ),
@@ -194,15 +199,15 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                         child: GlassContainer(
                           child: TextField(
                             controller: _messageController,
-                            style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                            style: TextStyle(color: textPrimary, fontSize: 14),
                             maxLines: 4,
                             minLines: 1,
                             textInputAction: TextInputAction.newline,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               hintText: '和 AI 聊聊你的想法...',
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 14),
+                              hintStyle: TextStyle(color: textMuted, fontSize: 14),
                             ),
                           ),
                         ),
@@ -230,8 +235,14 @@ class _MessageBubble extends StatelessWidget {
   final String content;
   final bool isUser;
   final int index;
+  final bool isDark;
 
-  const _MessageBubble({required this.content, required this.isUser, required this.index});
+  const _MessageBubble({
+    required this.content,
+    required this.isUser,
+    required this.index,
+    required this.isDark,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -259,7 +270,7 @@ class _MessageBubble extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isUser
                     ? AppColors.primary.withOpacity(0.25)
-                    : Colors.white.withOpacity(0.07),
+                    : (isDark ? Colors.white.withOpacity(0.07) : Colors.black.withOpacity(0.05)),
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16),
                   topRight: const Radius.circular(16),
@@ -267,14 +278,18 @@ class _MessageBubble extends StatelessWidget {
                   bottomRight: isUser ? const Radius.circular(4) : const Radius.circular(16),
                 ),
                 border: Border.all(
-                  color: isUser ? AppColors.primary.withOpacity(0.3) : Colors.white.withOpacity(0.08),
+                  color: isUser
+                      ? AppColors.primary.withOpacity(0.3)
+                      : (isDark ? Colors.white.withOpacity(0.08) : Colors.black.withOpacity(0.08)),
                   width: 0.5,
                 ),
               ),
               child: SelectableText(
                 content,
                 style: TextStyle(
-                  color: isUser ? AppColors.textPrimary : AppColors.textSecondary,
+                  color: isUser
+                      ? (isDark ? AppColors.textPrimary : Colors.white)
+                      : (isDark ? AppColors.textSecondary : AppColors.textSecondaryLight),
                   fontSize: 14,
                   height: 1.6,
                 ),

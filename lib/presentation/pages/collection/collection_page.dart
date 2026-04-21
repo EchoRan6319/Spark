@@ -31,7 +31,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
     final currentEmotion = ref.watch(filterEmotionProvider);
 
     return GradientBackground(
-      colors: AppColors.collectionGradient,
+      colors: AppColors.collectionGradientFor(context),
       child: SafeArea(
         bottom: false,
         child: Column(
@@ -107,6 +107,8 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
   }
 
   Widget _buildEmotionFilter(BuildContext context, WidgetRef ref, String? currentEmotion) {
+    final isDark = AppColors.isDark(context);
+    final textMuted = AppColors.adaptiveTextMuted(context);
     final emotions = ['', ...AppColors.emotionColors.keys];
     return SizedBox(
       height: 44,
@@ -125,24 +127,39 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                 emotion.isEmpty ? null : emotion,
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
+              constraints: const BoxConstraints(minHeight: 36),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: isSelected ? color.withOpacity(0.25) : Colors.white.withOpacity(0.05),
+                color: isSelected
+                    ? color.withOpacity(isDark ? 0.25 : 0.16)
+                    : (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.04)),
                 borderRadius: BorderRadius.circular(AppSizes.radiusCircle),
                 border: Border.all(
-                  color: isSelected ? color : Colors.white.withOpacity(0.1),
+                  color: isSelected
+                      ? color
+                      : (isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.1)),
                   width: isSelected ? 1.5 : 0.5,
                 ),
               ),
-              child: Text(
-                emotion.isEmpty
-                    ? '全部'
-                    : '${AppColors.emotionEmojis[emotion]} ${AppColors.emotionLabels[emotion]}',
-                style: TextStyle(
-                  color: isSelected ? color : AppColors.textMuted,
-                  fontSize: 13,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (emotion.isNotEmpty) ...[
+                    Text('${AppColors.emotionEmojis[emotion]}', style: const TextStyle(fontSize: 14)),
+                    const SizedBox(width: 4),
+                  ],
+                  Text(
+                    emotion.isEmpty ? '全部' : '${AppColors.emotionLabels[emotion]}',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: isSelected ? color : textMuted,
+                      fontSize: 13,
+                      height: 1.0,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                    ),
+                  ),
+                ],
               ),
             ),
           );

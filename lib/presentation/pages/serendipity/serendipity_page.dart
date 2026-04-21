@@ -16,9 +16,10 @@ class SerendipityPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final randomAsync = ref.watch(randomInspirationProvider);
+    final textMuted = AppColors.adaptiveTextMuted(context);
 
     return AnimatedGradientBackground(
-      colors: AppColors.serendipityGradient,
+      colors: AppColors.serendipityGradientFor(context),
       child: SafeArea(
         bottom: false,
         child: Column(
@@ -34,10 +35,19 @@ class SerendipityPage extends ConsumerWidget {
                       colors: [AppColors.pink, AppColors.accent],
                     ).createShader(b),
                     child: Text('🌟 灵感拾遗',
-                        style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.w800)),
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineLarge
+                            ?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800)),
                   ),
                   const SizedBox(height: 4),
-                  Text('重新发现你的创意时光', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.textMuted)),
+                  Text('重新发现你的创意时光',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(color: textMuted)),
                 ],
               ),
             ).animate().fadeIn(duration: 400.ms),
@@ -45,11 +55,14 @@ class SerendipityPage extends ConsumerWidget {
             Expanded(
               child: randomAsync.when(
                 loading: () => Center(
-                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    const CircularProgressIndicator(color: AppColors.pink),
-                    const SizedBox(height: 12),
-                    Text('正在翻找灵感...', style: Theme.of(context).textTheme.bodyMedium),
-                  ]),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const CircularProgressIndicator(color: AppColors.pink),
+                        const SizedBox(height: 12),
+                        Text('正在翻找灵感...',
+                            style: Theme.of(context).textTheme.bodyMedium),
+                      ]),
                 ),
                 error: (e, _) => Center(child: Text('加载失败: $e')),
                 data: (inspiration) {
@@ -58,28 +71,38 @@ class SerendipityPage extends ConsumerWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text('📭', style: TextStyle(fontSize: 64)).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
+                          const Text('📭', style: TextStyle(fontSize: 64))
+                              .animate()
+                              .scale(
+                                  duration: 600.ms, curve: Curves.elasticOut),
                           const SizedBox(height: 20),
-                          Text('还没有灵感可以拾遗', style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: AppColors.textSecondary)),
+                          Text('还没有灵感可以拾遗',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall
+                                  ?.copyWith(color: AppColors.textSecondary)),
                           const SizedBox(height: 8),
-                          Text('快去记录你的第一个灵感！', style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.center),
+                          Text('快去记录你的第一个灵感！',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              textAlign: TextAlign.center),
                           const SizedBox(height: 20),
                           GlassButton.custom(
                             onTap: () => context.push('/capture'),
                             width: 140,
                             height: 44,
-                            child: const Row(mainAxisSize: MainAxisSize.min, children: [
-                              Icon(Icons.add_rounded, color: Colors.white),
-                              SizedBox(width: 8),
-                              Text('记录灵感', style: TextStyle(color: Colors.white)),
-                            ]),
+                            child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.add_rounded, color: Colors.white),
+                                  SizedBox(width: 8),
+                                  Text('记录灵感',
+                                      style: TextStyle(color: Colors.white)),
+                                ]),
                           ),
                         ],
                       ),
                     );
                   }
-
-                  final color = Color(inspiration.colorValue);
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -88,16 +111,23 @@ class SerendipityPage extends ConsumerWidget {
                       children: [
                         // 来自多久以前的提示
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.06),
-                            borderRadius: BorderRadius.circular(AppSizes.radiusCircle),
+                            borderRadius:
+                                BorderRadius.circular(AppSizes.radiusCircle),
                           ),
                           child: Row(mainAxisSize: MainAxisSize.min, children: [
-                            const Icon(Icons.history_rounded, size: 14, color: AppColors.textMuted),
+                            const Icon(Icons.history_rounded,
+                                size: 14, color: AppColors.textMuted),
                             const SizedBox(width: 6),
-                            Text('来自 ${AppUtils.formatRelativeDate(inspiration.createdAt)}',
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.textMuted)),
+                            Text(
+                                '来自 ${AppUtils.formatRelativeDate(inspiration.createdAt)}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(color: textMuted)),
                           ]),
                         ).animate().fadeIn(duration: 300.ms),
 
@@ -106,10 +136,16 @@ class SerendipityPage extends ConsumerWidget {
                         // 灵感卡片（大号）
                         InspirationHeroCard(
                           inspiration: inspiration,
-                          onTap: () => context.push('/detail/${inspiration.uid}'),
-                        ).animate()
+                          onTap: () =>
+                              context.push('/detail/${inspiration.uid}'),
+                        )
+                            .animate()
                             .fadeIn(duration: 500.ms, curve: Curves.easeOut)
-                            .slideY(begin: 0.15, end: 0, duration: 500.ms, curve: Curves.easeOut),
+                            .slideY(
+                                begin: 0.15,
+                                end: 0,
+                                duration: 500.ms,
+                                curve: Curves.easeOut),
 
                         const SizedBox(height: 24),
 
@@ -118,25 +154,36 @@ class SerendipityPage extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             GlassButton.custom(
-                              onTap: () => context.push('/detail/${inspiration.uid}'),
+                              onTap: () =>
+                                  context.push('/detail/${inspiration.uid}'),
                               width: 120,
                               height: 44,
-                              child: const Row(mainAxisSize: MainAxisSize.min, children: [
-                                Icon(Icons.open_in_new_rounded, color: Colors.white, size: 16),
-                                SizedBox(width: 6),
-                                Text('查看详情', style: TextStyle(color: Colors.white)),
-                              ]),
+                              child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.open_in_new_rounded,
+                                        color: Colors.white, size: 16),
+                                    SizedBox(width: 6),
+                                    Text('查看详情',
+                                        style: TextStyle(color: Colors.white)),
+                                  ]),
                             ),
                             const SizedBox(width: 12),
                             GlassButton.custom(
-                              onTap: () => ref.read(randomInspirationProvider.notifier).loadRandom(),
+                              onTap: () => ref
+                                  .read(randomInspirationProvider.notifier)
+                                  .loadRandom(),
                               width: 100,
                               height: 44,
-                              child: const Row(mainAxisSize: MainAxisSize.min, children: [
-                                Icon(Icons.shuffle_rounded, color: Colors.white, size: 16),
-                                SizedBox(width: 6),
-                                Text('换一个', style: TextStyle(color: Colors.white)),
-                              ]),
+                              child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.shuffle_rounded,
+                                        color: Colors.white, size: 16),
+                                    SizedBox(width: 6),
+                                    Text('换一个',
+                                        style: TextStyle(color: Colors.white)),
+                                  ]),
                             ),
                           ],
                         ).animate(delay: 200.ms).fadeIn(duration: 400.ms),
